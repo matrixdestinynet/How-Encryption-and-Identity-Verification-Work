@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Technology Behind the Seal: Encryption & Identity Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --encrypt-color: #16a34a;
+            --kba-color: #f97316;
+            --credential-color: #8b5cf6;
+            --tamper-color: #dc2626;
+            --nj-blue: #0f766e;
+            --light: #ffffff;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #f8fafc;
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: var(--dark);
+            line-height: 1.7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e40af 0%, var(--primary) 100%);
+            color: white;
+            padding: 60px 40px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3rem;
+            opacity: 0.1;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            font-weight: 300;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            border-bottom: 4px solid var(--primary);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: #eff6ff;
+            border-left: 6px solid var(--primary);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+        }
+
+        /* Technology Grid */
+        .tech-section {
+            padding: 40px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .tech-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            border-left: 6px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .encrypt-card { border-left-color: var(--encrypt-color); }
+        .kba-card { border-left-color: var(--kba-color); }
+        .credential-card { border-left-color: var(--credential-color); }
+        .tamper-card { border-left-color: var(--tamper-color); }
+
+        .tech-icon {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .encrypt-card .tech-icon { color: var(--encrypt-color); }
+        .kba-card .tech-icon { color: var(--kba-color); }
+        .credential-card .tech-icon { color: var(--credential-color); }
+        .tamper-card .tech-icon { color: var(--tamper-color); }
+
+        .tech-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .badge-encrypt { background: #dcfce7; color: var(--encrypt-color); }
+        .badge-kba { background: #ffedd5; color: var(--kba-color); }
+        .badge-credential { background: #ede9fe; color: var(--credential-color); }
+        .badge-tamper { background: #fee2e2; color: var(--tamper-color); }
+
+        .spec-box {
+            background: var(--gray-light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Process Flow */
+        .process-section {
+            padding: 40px;
+            background: #f8fafc;
+            border-top: 1px solid var(--gray-light);
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 160px;
+            text-align: center;
+            padding: 25px 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Encryption Details */
+        .encryption-detail {
+            padding: 40px;
+            background: #ecfdf5;
+        }
+
+        .encrypt-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .encrypt-spec {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--encrypt-color);
+        }
+
+        .encrypt-level {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--encrypt-color);
+            margin: 15px 0;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 40px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            text-align: center;
+        }
+
+        .resource-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .resource-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            background: white;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-light);
+        }
+
+        .resource-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+            color: #1e40af;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            color: white;
+        }
+
+        /* Minimal Animation */
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .pulse-element {
+            animation: gentlePulse 4s infinite ease-in-out;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tech-section, .process-section, .encryption-detail, .cta-section {
+                padding: 25px;
+            }
+            
+            .tech-grid, .encrypt-specs {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-steps {
+                flex-direction: column;
+            }
+            
+            .resource-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .resource-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-icon">
+                <i class="fas fa-shield-haltered"></i>
+            </div>
+            <h1>The Technology Behind the Seal: How Encryption and Identity Verification Work</h1>
+            <p class="tagline">AES-256 • KBA • Credential Analysis • Tamper-Evident Seal</p>
+            <div style="background: rgba(255, 255, 255, 0.15); color: white; padding: 10px 20px; border-radius: 50px; display: inline-block; margin-top: 10px; font-size: 0.9rem;">
+                <i class="fas fa-lock"></i> The Digital Fortress Protecting Your Notarization
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">256</div>
+                <p style="color: var(--gray);">AES encryption bits</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">99.9%</div>
+                <p style="color: var(--gray);">KBA success rate</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10+</div>
+                <p style="color: var(--gray);">Years: recording retention</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <p style="color: var(--gray);">Tamper-evident seal</p>
+            </div>
+        </div>
+
+        <div class="philosophy-banner">
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="font-size: 2.5rem;">
+                    <i class="fas fa-microchip" style="color: var(--primary);"></i>
+                </div>
+                <div>
+                    <h3 style="color: var(--dark); margin-bottom: 10px;">🛡️ When you click "submit" for an online notarization, you're not just sending a document—you're entering a <strong>secure, encrypted digital environment</strong>.</h3>
+                    <p style="color: var(--dark);">Behind the simple video call interface lies a sophisticated stack of security technologies: <strong>Knowledge-Based Authentication (KBA), credential analysis, and AES-256 encryption</strong>. This guide explains how these technologies work together to create a tamper-evident, legally binding digital record.</p>
+                </div>
+            </div>
+        </div>
+
+        <main class="tech-section">
+            <h2 style="color: var(--dark); margin-bottom: 20px; text-align: center;">🧱 Four Core Security Technologies</h2>
+            
+            <div class="tech-grid">
+                <div class="tech-card encrypt-card pulse-element">
+                    <div class="tech-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="tech-title">AES-256 Encryption</div>
+                    <p><strong>Advanced Encryption Standard</strong></p>
+                    <ul style="list-style: none; margin-top: 20px;">
+                        <li style="padding: 8px 0;">• <strong>256-bit key</strong> — Current industry gold standard</li>
+                        <li style="padding: 8px 0;">• Used by U.S. government for Top Secret data</li>
+                        <li style="padding: 8px 0;">• Protects documents in transit and at rest</li>
+                        <li style="padding: 8px 0;">• Symmetric encryption: same key encrypts/decrypts</li>
+                    </ul>
+                    <div class="spec-box">
+                        <span style="font-weight: 700;">2^256 possible keys</span> — more than atoms in the universe
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <span class="badge badge-encrypt">🔐 FIPS 140-2 compliant</span>
+                    </div>
+                </div>
+                
+                <div class="tech-card kba-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="tech-title">Knowledge-Based Authentication (KBA)</div>
+                    <p><strong>"Out-of-wallet" questions</strong></p>
+                    <ul style="list-style: none; margin-top: 20px;">
+                        <li style="padding: 8px 0;">• Questions derived from public records</li>
+                        <li style="padding: 8px 0;">• Previous addresses, vehicles, loans</li>
+                        <li style="padding: 8px 0;">• <strong>Real-time verification</strong> against credit databases</li>
+                        <li style="padding: 8px 0;">• 4-5 questions, must answer 80% correctly</li>
+                    </ul>
+                    <div class="spec-box">
+                        <span style="font-weight: 700;">Instant, automated</span> — no pre-registration required
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <span class="badge badge-kba">🆔 Identity proofing</span>
+                    </div>
+                </div>
+                
+                <div class="tech-card credential-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="tech-title">Credential Analysis</div>
+                    <p><strong>Government ID verification</strong></p>
+                    <ul style="list-style: none; margin-top: 20px;">
+                        <li style="padding: 8px 0;">• AI-powered document authentication</li>
+                        <li style="padding: 8px 0;">• Detects forgery, tampering, expiration</li>
+                        <li style="padding: 8px 0;">• Hologram, microprint, UV verification</li>
+                        <li style="padding: 8px 0;">• Face match (selfie vs. ID photo)</li>
+                    </ul>
+                    <div class="spec-box">
+                        <span style="font-weight: 700;">NIST 800-63-3 IAL2 compliance</span>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <span class="badge badge-credential">📸 Real-time validation</span>
+                    </div>
+                </div>
+                
+                <div class="tech-card tamper-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <div class="tech-title">Tamper-Evident Seal</div>
+                    <p><strong>Digital signature + audit trail</strong></p>
+                    <ul style="list-style: none; margin-top: 20px;">
+                        <li style="padding: 8px 0;">• Cryptographic hash of final document</li>
+                        <li style="padding: 8px 0;">• Any modification breaks the seal</li>
+                        <li style="padding: 8px 0;">• Includes timestamp, notary info, transaction ID</li>
+                        <li style="padding: 8px 0;">• Verifiable by any PDF reader</li>
+                    </ul>
+                    <div class="spec-box">
+                        <span style="font-weight: 700;">Makes document "self-authenticating"</span>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <span class="badge badge-tamper">🔏 Legal presumption of validity</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <section class="process-section">
+            <h2 style="color: var(--dark); margin-bottom: 20px; text-align: center;">⚙️ The Security Workflow</h2>
+            
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h4 style="color: var(--dark);">Upload</h4>
+                    <p style="color: var(--gray);">AES-256 encrypted transmission</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h4 style="color: var(--dark);;">Credential Scan</h4>
+                    <p style="color: var(--gray);;">ID authentication + facial match</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-question"></i>
+                    </div>
+                    <h4 style="color: var(--dark);;">KBA Challenge</h4>
+                    <p style="color: var(--gray);;">Out-of-wallet questions</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h4 style="color: var(--dark);;">Live Session</h4>
+                    <p style="color: var(--gray);;">Encrypted video + recording</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-icon">
+                        <i class="fas fa-stamp"></i>
+                    </div>
+                    <h4 style="color: var(--dark);;">Seal & Deliver</h4>
+                    <p style="color: var(--gray);;">Tamper-evident PDF + audit log</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="encryption-detail">
+            <h2 style="color: var(--dark); margin-bottom: 20px; text-align: center;">🔐 AES-256: The Gold Standard</h2>
+            
+            <div class="encrypt-specs">
+                <div class="encrypt-spec">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">In Transit</h4>
+                    <div class="encrypt-level">TLS 1.3</div>
+                    <p>AES-256-GCM or AES-256-CBC. Perfect forward secrecy. Protects against man-in-the-middle attacks.</p>
+                </div>
+                
+                <div class="encrypt-spec">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">At Rest</h4>
+                    <div class="encrypt-level">AES-256</div>
+                    <p>All documents and recordings stored with AES-256 encryption. Keys managed in FIPS 140-2 Level 3 HSMs.</p>
+                </div>
+                
+                <div class="encrypt-spec">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">Audit Trail</h4>
+                    <div class="encrypt-level">SHA-256</div>
+                    <p>Cryptographic hash of every action. Immutable record of who did what, when, and from where.</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 12px;">
+                <p><i class="fas fa-info-circle" style="color: var(--encrypt-color); margin-right: 10px;"></i> <strong>How it works:</strong> AES-256 uses a 256-bit key to transform plaintext into ciphertext. Without the key, a brute-force attack would require <strong>2^256 attempts</strong>—computationally impossible with current technology.</p>
+            </div>
+        </section>
+
+        <section style="padding: 40px; background: white;">
+            <h2 style="color: var(--dark); margin-bottom: 20px; text-align: center;">📋 KBA: The "Out-of-Wallet" Test</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+                <div style="background: #f3f4f6; padding: 25px; border-radius: 12px;">
+                    <h4 style="color: var(--kba-color); margin-bottom: 15px;">✅ Sample Questions</h4>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 8px 0;">• "Which of these streets have you lived on?"</li>
+                        <li style="padding: 8px 0;">• "What year was your auto loan opened?"</li>
+                        <li style="padding: 8px 0;">• "Which of these is your current mortgage servicer?"</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #f3f4f6; padding: 25px; border-radius: 12px;">
+                    <h4 style="color: var(--kba-color); margin-bottom: 15px;">⚠️ Privacy Protected</h4>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 8px 0;">• Notary never sees answers</li>
+                        <li style="padding: 8px 0;">• Only "pass/fail" result shared</li>
+                        <li style="padding: 8px 0;">• Questions generated in real-time</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #f3f4f6; padding: 25px; border-radius: 12px;">
+                    <h4 style="color: var(--kba-color); margin-bottom: 15px;">📊 Success Rate</h4>
+                    <p>Legitimate users pass KBA <strong>95-99%</strong> of the time. Fraudsters fail rapidly.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding: 40px; background: #fefce8;">
+            <h2 style="color: var(--dark); margin-bottom: 20px; text-align: center;">🆔 Credential Analysis: How It Works</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <p style="font-weight: 700; margin-bottom: 10px;">1. Document Capture</p>
+                    <p style="color: var(--gray);">User uploads photo of government ID (driver's license, passport).</p>
+                </div>
+                
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <p style="font-weight: 700; margin-bottom: 10px;">2. Forensic Analysis</p>
+                    <p style="color: var(--gray);">AI checks security features: holograms, microprint, UV, font consistency, barcode data.</p>
+                </div>
+                
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <p style="font-weight: 700; margin-bottom: 10px;">3. Facial Match</p>
+                    <p style="color: var(--gray);">User takes selfie; biometric comparison to ID photo.</p>
+                </div>
+                
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <p style="font-weight: 700; margin-bottom: 10px;">4. Liveness Detection</p>
+                    <p style="color: var(--gray);">Ensures real person, not photo or video replay.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding: 40px; background: #ecfdf5;">
+            <h2 style="color: var(--dark); margin-bottom: 20px; text-align: center;">🔏 The Tamper-Evident Seal</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">✅ How to Verify</h4>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 8px 0;">1. Open PDF in Adobe Reader</li>
+                        <li style="padding: 8px 0;">2. Click the signature panel</li>
+                        <li style="padding: 8px 0;">3. View "Signature is VALID"</li>
+                        <li style="padding: 8px 0;">4. Check timestamp & notary info</li>
+                    </ul>
+                </div>
+                
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">❌ What Tampering Looks Like</h4>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 8px 0;">• "Document has been altered"</li>
+                        <li style="padding: 8px 0;">• Red X on signature panel</li>
+                        <li style="padding: 8px 0;">• Invalid timestamp</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 12px;">
+                <p><i class="fas fa-gavel" style="color: var(--tamper-color); margin-right: 10px;"></i> <strong>Legal effect:</strong> A tamper-evident seal creates a <strong>presumption of authenticity</strong> under NJ law. The burden shifts to the party challenging the document to prove it has been altered.</p>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h3 style="color: var(--dark); margin-bottom: 15px;">Security You Can Trust</h3>
+            <p style="color: var(--gray); margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Digital Notary's platform combines these technologies to exceed New Jersey's rigorous legal standards. Every session is encrypted, every identity is verified, and every seal is tamper-evident.
+            </p>
+            
+            <div class="resource-links">
+                <a href="https://www.digitalnotary.us/" class="resource-btn btn-primary">
+                    <i class="fas fa-file-signature"></i> Notary near me
+                </a>
+                <a href="https://www.google.com/maps/place/?q=place_id:ChIJ-Vn9Ynerw4kRDY_7eaVUuOA" class="resource-btn">
+                    <i class="fas fa-map-marker-alt"></i> GMB
+                </a>
+                <a href="https://matrixdestinynet.github.io/How-New-Jersey-Authorizes-and-Regulates-Online-Notarization/" class="resource-btn">
+                    <i class="fab fa-github"></i> Github Repositary
+                </a>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 12px; font-size: 0.9rem; color: var(--gray);">
+                <i class="fas fa-lightbulb" style="color: var(--primary); margin-right: 8px;"></i>
+                <strong>Tech tip:</strong> AES-256 encryption is the same standard used by the NSA to protect classified information. Your notarized documents are secured at the highest possible level.
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 Digital Notarization Technology Guide | AES-256 • KBA • NIST | Updated February 2026</p>
+            <p style="margin-top: 10px;">This information is for educational purposes. Security protocols may vary by provider.</p>
+        </footer>
+    </div>
+</body>
+</html>
